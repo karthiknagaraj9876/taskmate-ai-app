@@ -47,10 +47,11 @@ const createTaskSchema = z.object({
 const updateTaskSchema = z.object({
   title: z.string().trim().min(3).max(200).optional(),
   description: z.string().max(2000).nullable().optional(),
+  projectId: z.string().uuid().optional(),
   assignedTo: z.string().uuid().optional(),
   priority: taskPriority.optional(),
   dueDate: dateSchema.nullable().optional()
-}).strict().refine(
+}).refine(
   (data) => Object.keys(data).length > 0,
   "At least one field is required"
 );

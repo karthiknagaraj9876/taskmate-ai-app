@@ -17,6 +17,10 @@ interface LoginApiData {
   user?: AuthUser;
 }
 
+interface CurrentUserApiData {
+  user: AuthUser;
+}
+
 export const authService = {
   async login(credentials: LoginCredentials) {
     const response = await api.post<ApiResponse<LoginApiData>>(
@@ -32,8 +36,6 @@ export const authService = {
 
     localStorage.setItem("taskmate_token", token);
 
-    // Some backend implementations return the user with the token.
-    // If not, retrieve the user using the /me endpoint.
     let user = response.data.data.user;
 
     if (!user) {
@@ -47,11 +49,11 @@ export const authService = {
   },
 
   async getCurrentUser(): Promise<AuthUser> {
-    const response = await api.get<ApiResponse<AuthUser>>(
+    const response = await api.get<ApiResponse<CurrentUserApiData>>(
       "/auth/me"
     );
 
-    return response.data.data;
+    return response.data.data.user;
   },
 
   logout() {

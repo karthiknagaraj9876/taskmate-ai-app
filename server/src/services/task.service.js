@@ -1,6 +1,6 @@
 import { pool } from "../config/database.js";
 
-const getTaskAccessCondition = (role, userId) => {
+const getTaskAccessCondition = (role, userId, position = 1) => {
     if (role === "ADMIN") {
         return {
             sql: "TRUE",
@@ -14,14 +14,14 @@ const getTaskAccessCondition = (role, userId) => {
         SELECT 1
         FROM taskmate.projects p
         WHERE p.id = t.project_id
-          AND p.manager_id = $1
+          AND p.manager_id = $${position}
       )`,
             values: [userId]
         };
     }
 
     return {
-        sql: "t.assigned_to = $1",
+        sql: `t.assigned_to = $${position}`,
         values: [userId]
     };
 };
@@ -112,7 +112,7 @@ export const getTasks = async ({
 };
 
 export const getTaskById = async (taskId, user) => {
-  const access = getTaskAccessCondition(user.role, user.id);
+  const access = getTaskAccessCondition(user.role, user.id, 2);
 
   const result = await pool.query(
     `${getTaskByIdQuery}
@@ -171,7 +171,7 @@ export const createTask = async (data, user) => {
            $2 = 'ADMIN'
            OR (
              $2 = 'MANAGER'
-             AND manager_id = $3
+             AND (manager_id = $3 OR id = $3)
            )
          )`,
       [data.assignedTo, user.role, user.id]
@@ -248,7 +248,7 @@ export const updateTask = async (taskId, data, user) => {
   try {
     await client.query("BEGIN");
 
-    const access = getTaskAccessCondition(user.role, user.id);
+    const access = getTaskAccessCondition(user.role, user.id, 2);
 
     const taskResult = await client.query(
       `SELECT t.*
@@ -267,6 +267,36 @@ export const updateTask = async (taskId, data, user) => {
       throw error;
     }
 
+    if (data.projectId) {
+      const projectResult = await client.query(
+        `SELECT id, manager_id
+         FROM taskmate.projects
+         WHERE id = $1
+           AND status = 'ACTIVE'
+         FOR UPDATE`,
+        [data.projectId]
+      );
+
+      const project = projectResult.rows[0];
+
+      if (!project) {
+        const error = new Error("Active project not found");
+        error.statusCode = 400;
+        throw error;
+      }
+
+      if (
+        user.role === "MANAGER" &&
+        project.manager_id !== user.id
+      ) {
+        const error = new Error(
+          "You can assign tasks only to your own projects"
+        );
+        error.statusCode = 403;
+        throw error;
+      }
+    }
+
     if (data.assignedTo) {
       const assigneeResult = await client.query(
         `SELECT id
@@ -277,7 +307,7 @@ export const updateTask = async (taskId, data, user) => {
              $2 = 'ADMIN'
              OR (
                $2 = 'MANAGER'
-               AND manager_id = $3
+               AND (manager_id = $3 OR id = $3)
              )
            )`,
         [data.assignedTo, user.role, user.id]
@@ -296,6 +326,7 @@ export const updateTask = async (taskId, data, user) => {
     const columnMap = {
       title: "title",
       description: "description",
+      projectId: "project_id",
       assignedTo: "assigned_to",
       priority: "priority",
       dueDate: "due_date"
@@ -365,7 +396,7 @@ export const updateTaskStatus = async (taskId, status, user) => {
   try {
     await client.query("BEGIN");
 
-    const access = getTaskAccessCondition(user.role, user.id);
+    const access = getTaskAccessCondition(user.role, user.id, 2);
 
     const taskResult = await client.query(
       `SELECT t.*
@@ -434,7 +465,7 @@ export const deleteTask = async (taskId, user) => {
   try {
     await client.query("BEGIN");
 
-    const access = getTaskAccessCondition(user.role, user.id);
+    const access = getTaskAccessCondition(user.role, user.id, 2);
 
     const taskResult = await client.query(
       `SELECT t.*

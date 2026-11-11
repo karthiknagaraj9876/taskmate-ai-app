@@ -10,58 +10,15 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
-
-const DashboardPage = () => {
-  const { user, logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-  };
-
-  return (
-    <div style={{ padding: "40px" }}>
-      <h1>TaskMate AI Dashboard</h1>
-
-      <p>Welcome, {user?.fullName}!</p>
-
-      <div style={{ marginTop: "20px" }}>
-        <p>
-          <strong>Email:</strong> {user?.email}
-        </p>
-
-        <p>
-          <strong>Role:</strong> {user?.role}
-        </p>
-
-        <p>
-          <strong>User ID:</strong> {user?.id}
-        </p>
-      </div>
-
-      <button
-        onClick={handleLogout}
-        style={{
-          marginTop: "20px",
-          padding: "10px 24px",
-          background: "#3157d5",
-          color: "#ffffff",
-          border: "none",
-          borderRadius: "8px",
-          cursor: "pointer",
-        }}
-      >
-        Logout
-      </button>
-    </div>
-  );
-};
+import DashboardPage from "./pages/DashboardPage";
+import TaskManagementPage from "./pages/TaskManagementPage";
 
 const AppRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="auth-loading">
+      <div className="dashboard-loading">
         Checking authentication...
       </div>
     );
@@ -83,6 +40,14 @@ const AppRoutes = () => {
           path="/dashboard"
           element={<DashboardPage />}
         />
+
+        <Route
+          path="/tasks"
+          element={
+            <TaskManagementPage />
+          }
+        />
+        
       </Route>
 
       <Route
@@ -94,6 +59,7 @@ const AppRoutes = () => {
           />
         }
       />
+
 
       <Route
         path="*"
