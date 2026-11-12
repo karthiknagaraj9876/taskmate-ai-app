@@ -12,6 +12,10 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import TaskManagementPage from "./pages/TaskManagementPage";
+import ProjectsPage from "./pages/ProjectsPage";
+import UserManagementPage from "./pages/UserManagementPage";
+
+import AppLayout from "./components/layout/AppLayout";
 
 const AppRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -36,18 +40,27 @@ const AppRoutes = () => {
       />
 
       <Route element={<ProtectedRoute />}>
-        <Route
-          path="/dashboard"
-          element={<DashboardPage />}
-        />
+        <Route element={<AppLayout />}>
+          <Route
+            path="/dashboard"
+            element={<DashboardPage />}
+          />
 
-        <Route
-          path="/tasks"
-          element={
-            <TaskManagementPage />
-          }
-        />
-        
+          <Route
+            path="/tasks"
+            element={<TaskManagementPage />}
+          />
+
+          <Route
+            path="/projects"
+            element={<ProjectsPage />}
+          />
+
+          <Route
+            path="/users"
+            element={<UserManagementPage />}
+          />
+        </Route>
       </Route>
 
       <Route
@@ -59,7 +72,6 @@ const AppRoutes = () => {
           />
         }
       />
-
 
       <Route
         path="*"

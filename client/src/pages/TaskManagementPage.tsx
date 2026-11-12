@@ -260,13 +260,6 @@ const TaskManagementPage = () => {
   return (
     <div className="tasks-page">
       <header className="tasks-header">
-        <div>
-          <Link to="/dashboard" className="back-link">
-            ← Back to Dashboard
-          </Link>
-          <h1>Task Management</h1>
-          <p>Manage, assign and track your tasks.</p>
-        </div>
 
         {canManageTasks && (
           <button

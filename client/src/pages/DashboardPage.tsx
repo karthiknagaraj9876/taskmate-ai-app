@@ -125,36 +125,11 @@ const DashboardPage = () => {
   return (
     <div className="dashboard-page">
 
-      <header className="dashboard-header">
-        <div className="dashboard-brand">
-          <div className="brand-logo">T</div>
-          <span>TaskMate AI</span>
-        </div>
-
-        <div className="header-user">
-          <div className="user-details">
-            <strong>{user?.fullName}</strong>
-            <span>{user?.role}</span>
-          </div>
-
-          <div className="user-avatar">
-            {user?.fullName?.charAt(0).toUpperCase()}
-          </div>
-
-          <button
-            className="logout-button"
-            onClick={logout}
-          >
-            Logout
-          </button>
-        </div>
-      </header>
-
       <main className="dashboard-content">
 
         <div className="dashboard-welcome">
           <div>
-            <h1>{getDashboardTitle()}</h1>
+            {/* <h1>{getDashboardTitle()}</h1> */}
 
             <p>
               Welcome back, {user?.fullName}.{" "}
