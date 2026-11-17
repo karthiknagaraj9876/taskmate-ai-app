@@ -1,4 +1,5 @@
 
+import { Bot } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -35,6 +36,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       label: "Users",
       path: "/users",
       icon: "♙",
+      visible: true,
+    },
+    {
+      label: "AI Assistant",
+      path: "/ai-assistant",
+      icon: "bot",
       visible: true,
     },
   ];
@@ -83,7 +90,11 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 }
               >
                 <span className="sidebar-icon">
-                  {item.icon}
+                  {item.icon === "bot" ? (
+                    <Bot size={19} strokeWidth={1.9} />
+                  ) : (
+                    item.icon
+                  )}
                 </span>
 
                 <span>{item.label}</span>

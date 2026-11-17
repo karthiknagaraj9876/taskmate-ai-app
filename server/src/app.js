@@ -11,6 +11,8 @@ import taskRoutes from "./routes/task.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
+import mcpRoutes from "./routes/mcp.routes.js";
 
 const app = express();
 
@@ -44,6 +46,8 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/mcp", mcpRoutes);
 
 // Not found handler
 app.use((req, res) => {

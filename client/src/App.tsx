@@ -16,6 +16,7 @@ import ProjectsPage from "./pages/ProjectsPage";
 import UserManagementPage from "./pages/UserManagementPage";
 
 import AppLayout from "./components/layout/AppLayout";
+import AIChatPage from "./pages/AIChatPage";
 
 const AppRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -59,6 +60,11 @@ const AppRoutes = () => {
           <Route
             path="/users"
             element={<UserManagementPage />}
+          />
+
+          <Route
+            path="/ai-assistant"
+            element={<AIChatPage />}
           />
         </Route>
       </Route>
